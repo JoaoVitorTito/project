@@ -1,0 +1,242 @@
+
+
+import { Conta } from "./Conta.js";
+
+
+export class ContaPoupanca extends Conta{
+    constructor(saldoInicial,cliente,agencia){
+        super(saldoInicial,cliente,agencia);
+    }
+
+    sacar(valor){
+        const taxa= 1.02;
+        return this._sacar(valor, taxa);
+
+    }
+}
+import {Conta} from "./Conta.js";
+
+export class ContaSalario extends Conta{
+    constructor(cliente) {
+        super(0,cliente,100)
+
+    }
+
+    sacar(valor){
+        const taxa = 1.01;
+        return this._sacar(valor, taxa);
+        
+    }
+
+
+}
+export class Conta{
+    constructor(saldoInicial,cliente,agencia){
+        this._saldo = saldoInicial;
+        this._cliente = cliente;
+        this._agencia = agencia;
+        if(this.constructor == Conta){
+            throw new Error("Vc não deveria instanciar um objeto do tipo conta Diretamente")
+        }
+    }
+
+    set cliente(novoValor) {
+        if(novoValor instanceof Cliente) {
+            this._cliente = novoValor;
+        }
+
+    }
+
+    get cliente(){
+        return this._cliente;
+
+    }
+
+    get saldo(){
+        return this._saldo;
+
+    }
+    //Método abstrato
+    sacar(valor){
+        throw new Error("O metodo sacar da conta é abstrato")
+    }
+
+    _sacar(valor, taxa){
+
+
+        const valorSacado = taxa * valor;
+
+        if(this._saldo >= valor){
+            this._saldo -= valor;
+            return valorSacado;
+            }
+
+            return 0;
+
+    }
+    
+
+    depositar(valor){
+
+        this._saldo+= valor;
+    }
+
+    transferir(valor, conta){
+        const valorSacado = this.sacar(valor);
+        conta.depositar(valorSacado);
+
+    }
+
+
+}
+
+
+import { Conta } from "./Conta.js";
+
+export class ContaCorrente extends Conta{
+    static numeroDeContas = 0;
+    constructor( cliente, agencia) {
+        super(0, cliente,agencia);
+    ContaCorrente.numeroDeContas += 1;
+
+    }
+
+    //Quando esta dentro de uma classe se chama atributo
+
+    //Métodos Ex. Sacar
+
+        //sobreescrevendo o comportamento de sacar
+    sacar(valor){
+
+        let taxa = 1.1;
+      
+       return this._sacar(valor, taxa);
+
+    }
+
+}
+
+
+
+
+export class Funcionario{
+    constructor(nome, salario, cpf){
+        this._nome = nome;
+        this._salario = salario;
+        this._cpf = cpf;
+        
+        this._bonificacao = 1;
+        this._senha;
+        }
+
+
+       autenticar(senha){
+        return senha == this._senha;
+
+       }
+        cadastrarSenha(senha){
+            this._senha = senha;
+        }
+}
+import { Funcionario } from "./Funcionario.js";
+
+export class Gerente extends Funcionario{
+constructor(nome, salario, cpf){
+    super(nome, salario, cpf)
+        this._bonificacao = 1.1;
+}
+
+}
+import { Funcionario } from "./Funcionario.js";
+
+export class Diretor extends Funcionario{
+    constructor(nome, salario, cpf){
+        super(nome, salario, cpf);
+        this._bonificacao = 2;
+    }
+    }
+    
+    
+    
+    
+    import {Cliente} from "./Cliente.js"; 
+import {Gerente} from "./Funcionários/Gerente.js";
+import {Diretor} from "./Funcionários/Diretor.js";
+import {SistemaAutenticacao} from "./SistemaAutenticacao.js";
+/*
+//atributo new utilizado para instanciar um novo cliente
+const cliente1 = new Cliente("Ricardo", 1122233309);
+ //cliente1 agora vira uma variavel de acesso 
+
+const contaCorrenteRicardo = new ContaCorrente(cliente1, 1001);
+const contaPoupanca = new ContaPoupanca(50, cliente1, 1001);
+const contaSalario = new ContaSalario(cliente1);
+contaSalario.depositar(100);
+contaSalario.sacar(10);
+
+console.log(contaSalario);
+
+
+// para iniciar um modulo de projeto js, usasse o comando npm init no terminal
+*/
+
+const diretor = new Diretor("Rodrigo", 10000, 12345432111);
+diretor.cadastrarSenha("12345")
+const gerente = new Gerente("Tito", 5000, 51231231231);
+gerente.cadastrarSenha("123")
+
+const cliente = new Cliente ("Lais",6484564684, "456" );
+
+
+const diretorEstaLogado =SistemaAutenticacao.login(diretor,"12345");
+const gerenteEstaLogado =SistemaAutenticacao.login(gerente,"123");
+const clienteEstaLogado =SistemaAutenticacao.login(cliente,"123");
+
+console.log(diretorEstaLogado ,gerenteEstaLogado, clienteEstaLogado);
+
+
+/*
+Ser autenticavel significa ter o metodo autenticar
+
+ducky type
+*/ 
+
+export class SistemaAutenticacao{
+    static login(autenticavel, senha){
+        if(SistemaAutenticacao.ehAutenticavel(autenticavel)){
+
+        
+        return autenticavel.autenticar(senha);
+    }
+return false;
+}
+    static ehAutenticavel(autenticavel){
+      return  "autenticar" in autenticavel &&
+       autenticavel.autenticar instanceof Function
+
+    };
+}
+
+//classe para retirar repetições desnecessarias no codigo
+//classe e uma representação do mundo real, um conjunto de informações
+//Método e como se fosse uma ação relacionada a classe
+//Objeto e a representação do atributo referenciado no sistema
+export class Cliente{
+
+    get cpf(){
+
+        return this._cpf;
+    }
+
+    
+    // Construtor serve par iniciarlizar as variaveis
+    constructor(nome, cpf, senha) {
+        this.nome = nome;
+        this._cpf = cpf;
+        this._senha = senha;
+        
+    }
+    autenticar(){
+        return true;
+    }
+    }
