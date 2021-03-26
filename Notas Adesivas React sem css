@@ -1,0 +1,145 @@
+app.js
+
+import React, { Component } from 'react';
+import { Formulario } from './Components/Formulario';
+import {  ListaDeNotas} from "./Components/ListaDeNotas";
+
+class App extends Component {
+
+  constructor(){
+    super();
+    this.state ={
+      notas:[]
+    }
+  }
+  criarNota(titulo, texto){
+    const novaNota = {titulo, texto};
+    const novoArrayNotas = [this.state.notas,novaNota]
+    const novoEstado = {
+      notas:novoArrayNotas
+    }
+    this.setState(novoEstado)
+  }
+  render(){
+    return(
+        <section>
+      <Formulario criarNota={this.criarNota.bind(this)}/>
+        <ListaDeNotas notas={this.state.notas}/>
+        </section>
+      );
+  }
+  
+}
+// react -> lib
+// React -> ecossistema
+
+export default App;
+
+index.js
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+
+formulario.jsx
+
+import React, {Component} from "react"
+
+export class Formulario extends Component {
+      constructor(props){
+        super(props);
+        this.titulo="";
+        this.texto="";
+      }
+
+  _handleMudançaTitulo(evento){
+    evento.stopPropagation();
+    this.titulo= evento.target.value
+    console.log(this.titulo)
+  }
+  _handleMudançaTexto(evento){
+    evento.stopPropagation();
+    this.texto=evento.target.value;
+  }
+
+  _criarNota(evento) {
+    evento.preventDefault();
+    evento.stopPropagation();
+    this.props.criarNota(this.titulo, this.texto);
+
+    console.log("Uma nova nota foi criada " + this.titulo+ " "+ this.texto)
+  }
+render(){
+    return(  <form
+        onSubmit={this._criarNota.bind(this)}
+    >
+        <input type ="text" placeholder="Título" onChange={this._handleMudançaTitulo.bind(this)}/>
+        <textarea placeholder ="Escreva sua nota"
+            onChange={this._handleMudançaTexto.bind(this)}
+        >
+        </textarea>
+        <button>
+          Criar Nota
+        </button>
+  
+      </form>);
+}
+
+}
+
+ListaDeNotas.jsx
+
+import React, { Component } from "react"
+import CardNota from "./CardNota/CardNota"
+
+export class ListaDeNotas extends Component{
+    constructor(props){
+        super(props)
+    }
+
+    render(){
+        return( <ul>
+            {this.props.notas.map((nota, index) => {
+                return (
+
+                    <li key = {index}>
+                        <div>{""}</div>
+                        <CardNota titulo ={nota.titulo} texto ={nota.texto}/>
+                    </li>
+                );
+
+            })}
+            
+          </ul>
+
+
+        )
+    }
+   
+}
+
+CardNota.jsx
+
+import React, { Component } from 'react';
+import "./estilo.css"
+class CardNota extends Component {
+    render() { 
+        return ( <section className="card-nota">
+            <header>
+              <h3>{this.props.titulo}</h3>
+            </header>
+            <p>{this.props.texto}</p>
+          </section> );
+    }
+}
+ 
+export default CardNota;
